@@ -14,6 +14,10 @@ public abstract class SQLQueries {
     public static final String GET_ALL_SCIENTISTS = "SELECT * FROM scientists";
     public static final String GET_ALL_MASTERS = "SELECT * FROM scientists s INNER JOIN masters m ON s.scientist_id = m.scientist_id";
     public static final String GET_ALL_POSTGRADUATES = "SELECT * FROM scientists s INNER JOIN postgraduates m ON s.scientist_id = m.scientist_id";
+    public static final String GET_POSTGRADUATES_BY_TEACHER = "SELECT * FROM scientists s INNER JOIN postgraduates m ON s.scientist_id = m.scientist_id " +
+            "WHERE chief_id = ?";
+    public static final String GET_POSTGRADUATES_BY_CATHEDRA = "SELECT * FROM scientists s INNER JOIN postgraduates m ON s.scientist_id = m.scientist_id " +
+            "WHERE cathedra_id = ?";
     public static final String GET_SCIENTIST_BY_ID = "SELECT * FROM scientists WHERE scientist_id = ?";
     public static final String UPDATE_SCIENTIST = "UPDATE scientists SET second_name = ?, phone_number = ?, gender = ? " +
             "WHERE scientist_id = ?";

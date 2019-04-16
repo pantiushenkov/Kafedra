@@ -1,5 +1,6 @@
 package lib.java.dao2.impl;
 
+import lib.java.UI.presenter.petlya.DBdata;
 import lib.java.Utils.SQLQueries;
 import lib.java.dao2.config.ConnectionFactory;
 import lib.java.dao2.interfaces.TeacherDao;
@@ -80,5 +81,19 @@ public class TeacherDaoImpl implements TeacherDao {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<DBdata> getStatistics() {
+        List<DBdata> teachers = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection(); Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(SQLQueries.GET_ALL_TEACHERS);
+            while (rs.next()) {
+                teachers.add(new DBdata(rs.getString(1), rs.getString(2)));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return teachers;
     }
 }

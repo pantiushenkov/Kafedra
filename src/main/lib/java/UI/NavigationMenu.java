@@ -7,6 +7,7 @@ import lib.java.UI.ScientificWork.ScientificWorkView;
 import lib.java.UI.Teacher.TeacherView;
 import lib.java.UI.presenter.chuhalova.ScienceTopic_Form;
 import lib.java.UI.presenter.chuhalova.Scientists_Form;
+import lib.java.UI.presenter.petlya.Swing;
 import lib.java.UI.presenter.starostiuk.MainForm;
 import lib.java.Utils.ServiceFactory;
 
@@ -26,6 +27,7 @@ public class NavigationMenu extends JFrame {
     private JButton btnMasterManagement;
     private JButton btnScienceTopics;
     private JButton btnScientistsForm;
+    private JButton btnAspirants;
 
 
     public NavigationMenu() {
@@ -109,18 +111,18 @@ public class NavigationMenu extends JFrame {
 
         });
 
-        btnMasterManagement = new JButton();
-        btnMasterManagement.setBounds(280, 330, 170, 70);
-        btnMasterManagement.setBackground(new Color(214, 217, 223));
-        btnMasterManagement.setForeground(new Color(0, 0, 0));
-        btnMasterManagement.setEnabled(true);
-        btnMasterManagement.setFont(new Font("sansserif", 0, 12));
-        btnMasterManagement.setText("Магістратура");
-        btnMasterManagement.setVisible(true);
+        btnAspirants = new JButton();
+        btnAspirants.setBounds(280, 330, 170, 70);
+        btnAspirants.setBackground(new Color(214, 217, 223));
+        btnAspirants.setForeground(new Color(0, 0, 0));
+        btnAspirants.setEnabled(true);
+        btnAspirants.setFont(new Font("sansserif", 0, 12));
+        btnAspirants.setText("Аспірантура");
+        btnAspirants.setVisible(true);
 
-        btnMasterManagement.addActionListener(e -> {
+        btnAspirants.addActionListener(e -> {
             try {
-                new MainForm(ServiceFactory.getMasterService());
+                new Swing();
             } catch (Exception el) {
                 el.printStackTrace();
             }
@@ -245,6 +247,7 @@ public class NavigationMenu extends JFrame {
         contentPane.add(btnMasterManagement);
         contentPane.add(btnScienceTopics);
         contentPane.add(btnScientistsForm);
+        contentPane.add(btnAspirants);
         contentPane.add(label3);
         contentPane.add(label4);
         contentPane.add(label5);

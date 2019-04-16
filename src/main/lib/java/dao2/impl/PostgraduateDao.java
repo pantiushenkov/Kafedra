@@ -43,6 +43,36 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
         return postgraduate;
     }
 
+    public List<Postgraduate> getPostgraduatesByTeacher(String teacherId){
+        List<Postgraduate> postgraduates = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection(); PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_POSTGRADUATES_BY_TEACHER)) {
+            stmt.setString(1, teacherId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Postgraduate user = extractPostgraduateFromRS(rs);
+                postgraduates.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return postgraduates;
+    }
+
+    public List<Postgraduate> getPostgraduatesByCathedra(String cathedraId){
+        List<Postgraduate> postgraduates = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection(); PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_POSTGRADUATES_BY_CATHEDRA)) {
+            stmt.setString(1, cathedraId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Postgraduate user = extractPostgraduateFromRS(rs);
+                postgraduates.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return postgraduates;
+    }
+
     @Override
     public boolean add(Postgraduate scientist) {
         try (Connection connection = ConnectionFactory.getConnection()) {
