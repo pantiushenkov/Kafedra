@@ -78,7 +78,7 @@
     cathedra_id  VARCHAR(255) NOT NULL,
     position     VARCHAR(100) NOT NULL,
     degree       VARCHAR(100) NOT NULL,
-    start        DATE DEFAULT NULL,
+    start_date        DATE DEFAULT NULL,
     FOREIGN KEY (cathedra_id)
       REFERENCES cathedras (id)
       ON DELETE CASCADE ON UPDATE CASCADE,
@@ -88,7 +88,7 @@
   );
 
   INSERT INTO teachers
-  VALUES ('ids2', 'id1', 'Teacher', 'Doctor', '2018-18-12');
+  VALUES ('ids2', 'id1', 'Teacher', 'Doctor', '2018-12-10');
   INSERT INTO teachers
   VALUES ('ids3', 'id2', 'Chief', 'Candidate of science','2009-01-14');
   INSERT INTO teachers
