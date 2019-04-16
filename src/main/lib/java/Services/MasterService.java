@@ -7,7 +7,6 @@ import lib.java.model.dto.MasterMainDto;
 import lib.java.model.dto.ScientificWorkDto;
 import lib.java.model.dto.ScientistJobDto;
 
-import java.sql.Date;
 import java.util.*;
 
 public class MasterService {

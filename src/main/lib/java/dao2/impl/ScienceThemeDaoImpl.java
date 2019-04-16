@@ -4,6 +4,7 @@ import lib.java.Utils.SQLQueries;
 import lib.java.dao2.config.ConnectionFactory;
 import lib.java.dao2.interfaces.ScienceThemeDao;
 import lib.java.dao2.interfaces.WorksAndJobsDao;
+import lib.java.model.Cathedra;
 import lib.java.model.ScienceTheme;
 import lib.java.model.ScientistJob;
 
@@ -157,6 +158,23 @@ public class ScienceThemeDaoImpl implements ScienceThemeDao {
         try (Connection connection = ConnectionFactory.getConnection();
              PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_SCIENCE_THEMES_OF_WORK)) {
             stmt.setString(1, workId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                ScienceTheme scienceTheme = extractScienceThemeFromRS(rs);
+                scienceThemes.add(scienceTheme);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return scienceThemes;
+    }
+
+    @Override
+    public List<ScienceTheme> getAllByCathedra(Cathedra cathedra) {
+        List<ScienceTheme> scienceThemes = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_ALL_SCIENCE_THEMES_BY_CATHEDRA)) {
+            stmt.setString(1, cathedra.getId());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 ScienceTheme scienceTheme = extractScienceThemeFromRS(rs);

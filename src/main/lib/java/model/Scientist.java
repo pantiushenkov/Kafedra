@@ -61,13 +61,6 @@ public class Scientist {
 
     @Override
     public String toString() {
-        return "Scientist{" +
-                "scientistId='" + scientistId + '\'' +
-                ", secondName='" + secondName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", gender='" + gender + '\'' +
-                ", scientificWorks=" + scientificWorks +
-                ", sciensistJobs=" + sciensistJobs +
-                '}';
+        return secondName;
     }
 }

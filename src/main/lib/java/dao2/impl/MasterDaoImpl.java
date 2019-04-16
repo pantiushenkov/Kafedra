@@ -3,23 +3,25 @@ package lib.java.dao2.impl;
 import lib.java.Utils.SQLQueries;
 import lib.java.dao2.config.ConnectionFactory;
 import lib.java.dao2.interfaces.BaseDao;
-import lib.java.model.Postgraduate;
+import lib.java.dao2.interfaces.MasterDao;
+import lib.java.model.Cathedra;
+import lib.java.model.Master;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PostgraduateDao implements BaseDao<Postgraduate> {
+public class MasterDaoImpl implements MasterDao {
 
     @Override
-    public Postgraduate getById(String id) {
+    public Master getById(String id) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_POSTGRADUATE_BY_ID)) {
+             PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_MASTER_BY_ID)) {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return extractPostgraduateFromRS(rs);
+                return extractMasterFromRS(rs);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -27,24 +29,24 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
         return null;
     }
 
-    private Postgraduate extractPostgraduateFromRS(ResultSet rs) throws SQLException {
-        Postgraduate postgraduate = new Postgraduate();
-        postgraduate.setScientistId(rs.getString("scientist_id"));
-        postgraduate.setSecondName(rs.getString("second_name"));
-        postgraduate.setPhoneNumber(rs.getString("phone_number"));
-        postgraduate.setGender(rs.getString("gender"));
-        postgraduate.setCathedraId(rs.getString("cathedra_id"));
-        postgraduate.setChiefId(rs.getString("chief_id"));
-        postgraduate.setThesisTheme(rs.getString("thesis_theme"));
-        postgraduate.setThesisProtectionDate(rs.getDate("thesis_protection_date"));
-        postgraduate.setStartDate(rs.getDate("start_date"));
-        postgraduate.setEndDate(rs.getDate("end_date"));
+    private Master extractMasterFromRS(ResultSet rs) throws SQLException {
+        Master master = new Master();
+        master.setScientistId(rs.getString("scientist_id"));
+        master.setSecondName(rs.getString("second_name"));
+        master.setPhoneNumber(rs.getString("phone_number"));
+        master.setGender(rs.getString("gender"));
+        master.setCathedraId(rs.getString("cathedra_id"));
+        master.setChiefId(rs.getString("chief_id"));
+        master.setDiplomaTheme(rs.getString("diploma_theme"));
+        master.setStartDate(rs.getDate("start_date"));
+        master.setEndDate(rs.getDate("end_date"));
+        master.setEndReason(rs.getString("end_reason"));
 
-        return postgraduate;
+        return master;
     }
 
     @Override
-    public boolean add(Postgraduate scientist) {
+    public boolean add(Master scientist) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             //TODO add check if scientist exists
             PreparedStatement ps = connection.prepareStatement(SQLQueries.INSERT_SCIENSIST);
@@ -54,14 +56,14 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
             ps.setString(3, scientist.getPhoneNumber());
             ps.setString(4, scientist.getGender());
             int i = ps.executeUpdate();
-            ps = connection.prepareStatement(SQLQueries.INSERT_POSTGRADUATE);
+            ps = connection.prepareStatement(SQLQueries.INSERT_MASTER);
             ps.setString(1, newId);
             ps.setString(2, scientist.getCathedraId());
             ps.setString(3, scientist.getChiefId());
-            ps.setDate(4, scientist.getStartDate());
-            ps.setDate(5, scientist.getEndDate());
-            ps.setString(6, scientist.getThesisTheme());
-            ps.setDate(7, scientist.getThesisProtectionDate());
+            ps.setString(4, scientist.getDiplomaTheme());
+            ps.setDate(5, scientist.getStartDate());
+            ps.setDate(6, scientist.getEndDate());
+            ps.setString(7, scientist.getEndReason());
             i += ps.executeUpdate();
             ps.close();
             if (i == 2) {
@@ -74,24 +76,41 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
     }
 
     @Override
-    public List<Postgraduate> getAll() {
-        List<Postgraduate> postgraduates = new ArrayList();
+    public List<Master> getAll() {
+        List<Master> masters = new ArrayList();
         try (Connection connection = ConnectionFactory.getConnection(); Statement stmt = connection.createStatement()) {
-            ResultSet rs = stmt.executeQuery(SQLQueries.GET_ALL_POSTGRADUATES);
+            ResultSet rs = stmt.executeQuery(SQLQueries.GET_ALL_MASTERS);
             while (rs.next()) {
-                Postgraduate user = extractPostgraduateFromRS(rs);
-                postgraduates.add(user);
+                Master user = extractMasterFromRS(rs);
+                masters.add(user);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return postgraduates;
+        return masters;
+    }
+
+    @Override
+    public List<Master> getAllByCathedra(Cathedra cathedra) {
+        List<Master> masters = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_ALL_MASTERS_BY_CATHEDRA)) {
+            stmt.setString(1, cathedra.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Master master = extractMasterFromRS(rs);
+                masters.add(master);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return masters;
     }
 
     @Override
     public boolean delete(String scientistId) {
         try (Connection connection = ConnectionFactory.getConnection();
-             PreparedStatement ps = connection.prepareStatement(SQLQueries.DELETE_POSTGRADUATE)) {
+             PreparedStatement ps = connection.prepareStatement(SQLQueries.DELETE_MASTER)) {
             //TODO add check if scientist exists
             ps.setString(1, scientistId);
             int i = ps.executeUpdate();
@@ -103,7 +122,7 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
     }
 
     @Override
-    public boolean update(Postgraduate scientist) {
+    public boolean update(Master scientist) {
         try (Connection connection = ConnectionFactory.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(SQLQueries.UPDATE_SCIENTIST);
             ps.setString(1, scientist.getSecondName());
@@ -111,13 +130,13 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
             ps.setString(3, scientist.getGender());
             ps.setString(4, scientist.getScientistId());
             int i = ps.executeUpdate();
-            ps = connection.prepareStatement(SQLQueries.UPDATE_POSTGRADUATE);
+            ps = connection.prepareStatement(SQLQueries.UPDATE_MASTER);
             ps.setString(1, scientist.getCathedraId());
             ps.setString(2, scientist.getChiefId());
-            ps.setString(3, scientist.getThesisTheme());
+            ps.setString(3, scientist.getDiplomaTheme());
             ps.setDate(4, scientist.getStartDate());
             ps.setDate(5, scientist.getEndDate());
-            ps.setDate(6, scientist.getThesisProtectionDate());
+            ps.setString(6, scientist.getEndReason());
             ps.setString(7, scientist.getScientistId());
             i += ps.executeUpdate();
             return i == 2;
