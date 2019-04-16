@@ -5,19 +5,18 @@ import lib.java.Services.ChuhalovaService;
 import lib.java.Services.MasterService;
 import lib.java.dao2.impl.*;
 import lib.java.dao2.interfaces.*;
-import lib.java.model.Master;
 
 public class ServiceFactory {
 
     private static MasterService masterService;
     private static ChuhalovaService chuhalovaService;
-    private static BaseDao<Master> masterDao = new MasterDao();
+    private static MasterDao masterDao = new MasterDaoImpl();
     private static CathedraDao cathedraDao = new CathedraDaoImpl();
     private static ScienceThemeDao scienceThemeDao = new ScienceThemeDaoImpl();
     private static TeacherDao teacherDao = new TeacherDaoImpl();
     private static WorksAndJobsDao worksAndJobsDao = new WorksAndJobsDaoImpl();
     private static ScientistDao scientistBaseDao = new ScientistDaoImpl();
-    private static PostgraduateDao postgraduateDao = new PostgraduateDao();
+    private static PostgraduateDao postgraduateDao = new PostgraduateDaoImpl();
 
     private ServiceFactory() {
     }

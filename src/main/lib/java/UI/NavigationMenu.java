@@ -104,7 +104,7 @@ public class NavigationMenu extends JFrame {
 
         btnScientistsForm.addActionListener(e -> {
             try {
-                new Scientists_Form();
+                new Scientists_Form(ServiceFactory.getMasterService(), ServiceFactory.getChuhalovaService());
             } catch (Exception el) {
                 el.printStackTrace();
             }

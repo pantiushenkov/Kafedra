@@ -1,7 +1,7 @@
 package lib.java.UI.presenter.petlya;
 
 import lib.java.dao2.impl.CathedraDaoImpl;
-import lib.java.dao2.impl.PostgraduateDao;
+import lib.java.dao2.impl.PostgraduateDaoImpl;
 import lib.java.dao2.impl.TeacherDaoImpl;
 import lib.java.dao2.impl.WorksAndJobsDaoImpl;
 import lib.java.dao2.interfaces.CathedraDao;
@@ -12,7 +12,6 @@ import lib.java.model.Postgraduate;
 import lib.java.model.ScientificWork;
 import lib.java.model.Teacher;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class FastDBgetter {
     ArrayList<DBdata> myArray;
     CathedraDao cathedraDao = new CathedraDaoImpl();
     TeacherDao teacherDao = new TeacherDaoImpl();
-    PostgraduateDao postgraduateDao = new PostgraduateDao();
+    PostgraduateDaoImpl postgraduateDao = new PostgraduateDaoImpl();
     WorksAndJobsDao worksAndJobsDao = new WorksAndJobsDaoImpl();
 
     public FastDBgetter() {
@@ -30,8 +29,8 @@ public class FastDBgetter {
     public ArrayList<DBdata> getDeps() {
         ArrayList<DBdata> array = new ArrayList<DBdata>();
         List<Cathedra> all = cathedraDao.getAll();
-        for (Cathedra cat:
-             all) {
+        for (Cathedra cat :
+                all) {
             array.add(new DBdata(cat.getId(), cat.getName()));
         }
         myArray = array;
@@ -41,7 +40,7 @@ public class FastDBgetter {
     public ArrayList<DBdata> getProfs() {
         ArrayList<DBdata> array = new ArrayList<DBdata>();
         List<Teacher> all = teacherDao.getAll();
-        for (Teacher cat:
+        for (Teacher cat :
                 all) {
             array.add(new DBdata(cat.getScientistId(), cat.getSecondName()));
         }
@@ -54,8 +53,8 @@ public class FastDBgetter {
         String id = myArray.get(num).id;
         ArrayList<DBdata> array = new ArrayList<DBdata>();
         List<Postgraduate> postgraduatesByTeacher = postgraduateDao.getPostgraduatesByTeacher(id);
-        for (Postgraduate post:
-             postgraduatesByTeacher) {
+        for (Postgraduate post :
+                postgraduatesByTeacher) {
             array.add(new DBdata(post.getScientistId(), post.getSecondName()));
         }
         myArray = array;
@@ -66,7 +65,7 @@ public class FastDBgetter {
         String id = myArray.get(num).id;
         ArrayList<DBdata> array = new ArrayList<DBdata>();
         List<Postgraduate> postgraduatesByTeacher = postgraduateDao.getPostgraduatesByCathedra(id);
-        for (Postgraduate post:
+        for (Postgraduate post :
                 postgraduatesByTeacher) {
             array.add(new DBdata(post.getScientistId(), post.getSecondName()));
         }
@@ -79,9 +78,9 @@ public class FastDBgetter {
         for (Teacher teacher : teacherDao.getAll()) {
             int count = 0;
             for (Postgraduate postgraduate : postgraduateDao.getPostgraduatesByTeacher(teacher.getScientistId())) {
-               count+=worksAndJobsDao.getScientificWorksByAuthorId(postgraduate.getScientistId()).size();
+                count += worksAndJobsDao.getScientificWorksByAuthorId(postgraduate.getScientistId()).size();
             }
-            array.add(new DBdata( ""+count,teacher.getSecondName()));
+            array.add(new DBdata("" + count, teacher.getSecondName()));
         }
         myArray = array;
         return array;
@@ -100,9 +99,9 @@ public class FastDBgetter {
         ArrayList<DBdata> array = new ArrayList<DBdata>();
         array.add(new DBdata(myArray.get(num + 1).id, myArray.get(num + 1).name));
         List<ScientificWork> scientificWorksByAuthorId = worksAndJobsDao.getScientificWorksByAuthorId(id);
-        for (ScientificWork post:
+        for (ScientificWork post :
                 scientificWorksByAuthorId) {
-            array.add(new DBdata(post.getName(), ""+post.getYearOfJob()));
+            array.add(new DBdata(post.getName(), "" + post.getYearOfJob()));
         }
         return array;
     }

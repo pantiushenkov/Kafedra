@@ -44,6 +44,7 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
     public ScienceTopic_Form(MasterService masterService, ChuhalovaService chuhalovaService) {
         this.chuhalovaService = chuhalovaService;
         this.masterService = masterService;
+        this.setVisible(true);
         initComponents();
         Show_Departments();
         Show_In_JTable();
@@ -76,7 +77,8 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
     }
 
     public void Show_In_JTable() {
-        List<ScienceTheme> list = chuhalovaService.getScienceThemes();
+        Cathedra cathedra = (Cathedra) selectdepinst.getSelectedItem();
+        List<ScienceTheme> list = chuhalovaService.getScienceThemesByCathedra(cathedra);
         DefaultTableModel model = (DefaultTableModel) table_st.getModel();
         // clear jtable content
         model.setRowCount(0);
@@ -103,7 +105,6 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
         cal.setTime(startDate);
         startDate_input.setDate(startDate);
         Date finishDate = scienceTheme.getEndDate();
-        Calendar cal2 = Calendar.getInstance();
         cal.setTime(finishDate);
         finishDate_input.setDate(finishDate);
     }
@@ -131,7 +132,7 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
         idST = new javax.swing.JLabel();
         selectdepinst = new javax.swing.JComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("idScientist");
 
         delete_st.setLabel("Delete");
@@ -292,9 +293,11 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
 
     private void edit_stActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_stActionPerformed
         if (checkInputs() && !idST.getText().equals("")) {
-            ScienceTheme scienceTheme = new ScienceTheme(idST.getText(), nameST_input.getText(),
+            Cathedra cathedra = (Cathedra) selectdepinst.getSelectedItem();
+            ScienceTheme scienceTheme = new ScienceTheme(idST_input.getText(), nameST_input.getText(),
                     nameCust_input.getText(), new java.sql.Date(startDate_input.getDate().getTime()),
                     new java.sql.Date(finishDate_input.getDate().getTime()));
+            scienceTheme.setCathedraId(cathedra.getId());
             chuhalovaService.updateScienceTheme(scienceTheme);
             Show_In_JTable();
             JOptionPane.showMessageDialog(null, "ST Updated");
@@ -308,14 +311,13 @@ public class ScienceTopic_Form extends javax.swing.JFrame {
         if (checkInputs() && !idST.getText().equals("")) {
             try {
 
-
                 Cathedra cathedra = (Cathedra) selectdepinst.getSelectedItem();
                 ScienceTheme scienceTheme = new ScienceTheme();
                 scienceTheme.setCathedraId(cathedra != null ? cathedra.getId() : null);
                 scienceTheme.setName(nameST_input.getText());
                 scienceTheme.setCustomer(nameCust_input.getText());
                 scienceTheme.setStartDate(new java.sql.Date(startDate_input.getDate().getTime()));
-                scienceTheme.setStartDate(new java.sql.Date(finishDate_input.getDate().getTime()));
+                scienceTheme.setEndDate(new java.sql.Date(finishDate_input.getDate().getTime()));
                 chuhalovaService.createScienceTheme(scienceTheme);
                 Show_In_JTable();
 

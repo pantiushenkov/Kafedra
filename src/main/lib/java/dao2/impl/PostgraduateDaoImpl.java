@@ -3,6 +3,8 @@ package lib.java.dao2.impl;
 import lib.java.Utils.SQLQueries;
 import lib.java.dao2.config.ConnectionFactory;
 import lib.java.dao2.interfaces.BaseDao;
+import lib.java.dao2.interfaces.PostgraduateDao;
+import lib.java.model.Cathedra;
 import lib.java.model.Postgraduate;
 
 import java.sql.*;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PostgraduateDao implements BaseDao<Postgraduate> {
+public class PostgraduateDaoImpl implements PostgraduateDao {
 
     @Override
     public Postgraduate getById(String id) {
@@ -57,6 +59,8 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
         }
         return postgraduates;
     }
+
+
 
     public List<Postgraduate> getPostgraduatesByCathedra(String cathedraId){
         List<Postgraduate> postgraduates = new ArrayList();
@@ -155,5 +159,10 @@ public class PostgraduateDao implements BaseDao<Postgraduate> {
             se.printStackTrace();
         }
         return false;
+    }
+
+    @Override
+    public List<Postgraduate> getAllByCathedra(Cathedra cathedra) {
+        return getPostgraduatesByCathedra(cathedra.getId());
     }
 }

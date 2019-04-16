@@ -72,4 +72,11 @@ public abstract class SQLQueries {
     public static final String DELETE_ALL_AUTHORS_FROM_WORK = "DELETE FROM sc_works_scientists WHERE work_id = ?";
     public static final String GET_SCIENCE_THEME_CHIEF = "SELECT worker_id FROM sc_themes_scientists WHERE science_theme_id = ? AND " +
             "name = 'theme chief' ORDER BY start_date DESC";
+    public static final String GET_ALL_SCIENCE_THEMES_BY_CATHEDRA = "SELECT * FROM science_themes WHERE cathedra_id = ?";
+    public static final String UPDATE_TEACHER = "UPDATE teachers SET cathedra_id = ?, position = ?, degree = ? WHERE scientist_id = ?";
+    public static final String INSERT_TEACHER = "INSERT INTO teachers VALUES (?, ?, ?, ?)";
+    public static final String DELETE_TEACHER = "DELETE FROM teachers WHERE scientist_id = ?";
+    public static final String GET_ALL_TEACHERS_BY_CATHEDRA = "SELECT * FROM scientists s INNER JOIN teachers m " +
+            "ON s.scientist_id = m.scientist_id WHERE cathedra_id = ?";;
+    public static final String GET_ALL_MASTERS_BY_CATHEDRA = "SELECT * FROM scientists s INNER JOIN masters m ON s.scientist_id = m.scientist_id WHERE cathedra_id = ?";
 }

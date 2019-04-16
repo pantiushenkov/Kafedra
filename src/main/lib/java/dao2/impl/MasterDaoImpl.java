@@ -3,6 +3,8 @@ package lib.java.dao2.impl;
 import lib.java.Utils.SQLQueries;
 import lib.java.dao2.config.ConnectionFactory;
 import lib.java.dao2.interfaces.BaseDao;
+import lib.java.dao2.interfaces.MasterDao;
+import lib.java.model.Cathedra;
 import lib.java.model.Master;
 
 import java.sql.*;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MasterDao implements BaseDao<Master> {
+public class MasterDaoImpl implements MasterDao {
 
     @Override
     public Master getById(String id) {
@@ -81,6 +83,23 @@ public class MasterDao implements BaseDao<Master> {
             while (rs.next()) {
                 Master user = extractMasterFromRS(rs);
                 masters.add(user);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return masters;
+    }
+
+    @Override
+    public List<Master> getAllByCathedra(Cathedra cathedra) {
+        List<Master> masters = new ArrayList();
+        try (Connection connection = ConnectionFactory.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(SQLQueries.GET_ALL_MASTERS_BY_CATHEDRA)) {
+            stmt.setString(1, cathedra.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Master master = extractMasterFromRS(rs);
+                masters.add(master);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
