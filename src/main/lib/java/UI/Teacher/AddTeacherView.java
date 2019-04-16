@@ -19,7 +19,6 @@ public class AddTeacherView extends JFrame {
     private JButton apply;
     private JButton cancel;
 
-    private JLabel label1;
     private JLabel label2;
     private JLabel label3;
     private JLabel label4;
@@ -28,7 +27,6 @@ public class AddTeacherView extends JFrame {
     private JLabel label7;
     private JLabel label8;
 
-    private JTextField field1;
     private JTextField field2;
     private JTextField field3;
     private JTextField field4;
@@ -55,9 +53,6 @@ public class AddTeacherView extends JFrame {
 
         int start = 50;
         int step = 50;
-
-        label1 = CLabel.create("Код: ", new int[]{80, start, 121, 32});
-        field1 = CTextField.create(new int[]{240, start, 150, 35});
 
         label2 = CLabel.create("Кафедра", new int[]{80, start += step, 122, 25});
         field2 = CTextField.create(new int[]{240, start, 150, 35});
@@ -86,7 +81,7 @@ public class AddTeacherView extends JFrame {
         apply = CButton.create("ОК", new int[]{277, 500, 150, 35});
         apply.addActionListener(e -> {
             try {
-                TeacherEntity teacherEntity = TeacherRowParser.createObject(field1, field2, field3, field4, field5, field6, field7, field8);
+                TeacherEntity teacherEntity = TeacherRowParser.createObject(field2, field3, field4, field5, field6, field7, field8);
                 scientificWorkService.getDao().persist(teacherEntity);
                 model.addRow(teacherEntity.getRow());
                 dispose();
@@ -98,7 +93,6 @@ public class AddTeacherView extends JFrame {
         contentPane.add(apply);
         contentPane.add(cancel);
 
-        contentPane.add(field1);
         contentPane.add(field2);
         contentPane.add(field3);
         contentPane.add(field4);
@@ -107,7 +101,6 @@ public class AddTeacherView extends JFrame {
         contentPane.add(field7);
         contentPane.add(field8);
 
-        contentPane.add(label1);
         contentPane.add(label2);
         contentPane.add(label3);
         contentPane.add(label4);

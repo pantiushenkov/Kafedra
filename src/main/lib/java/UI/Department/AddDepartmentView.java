@@ -16,8 +16,7 @@ public class AddDepartmentView extends JFrame {
 
     private DepartmentService departmentService;
     private JButton apply;
-    private JButton cancel;
-    private JLabel label1;
+    private JButton cancel;private JLabel label1;
     private JLabel label2;
     private JLabel label3;
 
@@ -55,7 +54,7 @@ public class AddDepartmentView extends JFrame {
         apply = CButton.create("ОК", new int[]{277, 299, 150, 35});
         apply.addActionListener(e -> {
             try {
-                DepartmentEntity departmentEntity = DepartmentRowParser.createObject(field1, field2, field3);
+                DepartmentEntity departmentEntity = DepartmentRowParser.createObject(field2, field3);
                 departmentService.getDao().persist(departmentEntity);
                 model.addRow(departmentEntity.getRow());
                 dispose();
@@ -67,11 +66,9 @@ public class AddDepartmentView extends JFrame {
         contentPane.add(apply);
         contentPane.add(cancel);
 
-        contentPane.add(field1);
         contentPane.add(field2);
         contentPane.add(field3);
 
-        contentPane.add(label1);
         contentPane.add(label2);
         contentPane.add(label3);
 

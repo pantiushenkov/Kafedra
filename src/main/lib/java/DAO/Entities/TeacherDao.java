@@ -5,43 +5,49 @@ import lib.java.DAO.PersistException;
 import lib.java.Entities.TeacherEntity;
 import lib.java.Utils.Config;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TeacherDao extends Dao<TeacherEntity, Integer> {
+public class TeacherDao extends Dao<TeacherEntity, String> {
 
     public TeacherDao(Connection connection) {
         super(connection);
     }
 
-    private String key = "idTeacher";
-    private String department = "idDepartment";
-    private String position = "Position";
-    private String title = "Title";
-    private String surname = "Surname";
-    private String startDate = "StartDate";
-    private String phone = "Phone";
-    private String sex = "Sex";
+    private String key = "scientist_id";
+    private String department = "cathedra_id";
+    private String position = "position";
+    private String title = "degree";
+    private String surname = "second_name";
+    private String startDate = "start_date";
+    private String phone = "phone_number";
+    private String sex = "gender";
 
-    private String[] params = new String[]{department, position, title, surname, startDate, phone, sex};
-    private String[] allParams = new String[]{key, department, position, title, surname, startDate, phone, sex};
+    private String[] scientist = new String[]{key, surname, phone, sex};
+    private String[] teacher = new String[]{key, department, position, title, startDate};
+    private String innerJoin = "INNER JOIN scientists s ON teachers.scientist_id = s.scientist_id";
 
     @Override
     public String getDbName() {
-        return Config.getTable("Teacher");
+        return Config.getTable("teachers");
     }
 
     @Override
     public String getCreateQuery() {
-        return super.getCreateQuery(allParams);
+        return super.getCreateQuery(scientist, "scientists") +
+                super.getCreateQuery(teacher, "teachers");
+    }
+
+    @Override
+    public String getSelectQuery() {
+        return super.getSelectQuery() + innerJoin;
     }
 
     @Override
     public String getUpdateQuery() {
-        return super.getUpdateQuery(key, params);
+        return super.getUpdateQuery(key, new String[]{surname, phone, sex}, "scientists") +
+                super.getUpdateQuery(key, new String[]{department, position, title, startDate}, "teachers");
     }
 
     @Override
@@ -51,31 +57,26 @@ public class TeacherDao extends Dao<TeacherEntity, Integer> {
 
     @Override
     public String getSearchQuery() {
-        return super.getSearchQuery(allParams);
+        return super.getSearchQuery(new String[]{department, position, title, startDate, surname, phone, sex}, innerJoin);
     }
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, TeacherEntity object) throws PersistException {
         try {
-            statement.setInt(1, object.getKey());
-            prepareStatement(statement, object, 2);
+            if (statement.getParameterMetaData().getParameterCount() == 4) {
+                statement.setString(1, object.getKey());
+                statement.setString(2, object.getSurname());
+                statement.setString(3, object.getPhone());
+                statement.setString(4, object.getSex());
+            } else {
+                statement.setString(1, object.getKey());
+                statement.setString(2, object.getDepartment());
+                statement.setString(3, object.getPosition());
+                statement.setString(4, object.getTitle());
+                statement.setDate(5, object.getStartDate());
+            }
         } catch (Exception e) {
-            throw new PersistException(e);
-        }
-    }
-
-    private void prepareStatement(PreparedStatement statement, TeacherEntity object, int start) throws PersistException {
-        try {
-            statement.setInt(start++, object.getDepartment());
-            statement.setString(start++, object.getPosition());
-            statement.setString(start++, object.getTitle());
-            statement.setString(start++, object.getSurname());
-            statement.setDate(start++, object.getStartDate());
-            statement.setString(start++, object.getPhone());
-            statement.setString(start, object.getSex());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new PersistException(e);
+            throw new PersistException(e.getMessage());
         }
     }
 
@@ -83,12 +84,11 @@ public class TeacherDao extends Dao<TeacherEntity, Integer> {
     protected void prepareStatementForSearch(PreparedStatement statement, TeacherEntity object) throws PersistException {
         try {
             super.prepareStatementForSearch(statement, new Object[]{
-                            object.getKey(),
                             object.getDepartment(),
                             object.getPosition(),
                             object.getTitle(),
-                            object.getSurname(),
                             object.getStartDate(),
+                            object.getSurname(),
                             object.getPhone(),
                             object.getSex(),
                     }
@@ -101,8 +101,18 @@ public class TeacherDao extends Dao<TeacherEntity, Integer> {
     @Override
     protected void prepareStatementForUpdate(PreparedStatement statement, TeacherEntity object) throws PersistException {
         try {
-            prepareStatement(statement, object, 1);
-            statement.setInt(allParams.length, object.getKey());
+            if (statement.getParameterMetaData().getParameterCount() == 4) {
+                statement.setString(1, object.getSurname());
+                statement.setString(2, object.getPhone());
+                statement.setString(3, object.getSex());
+                statement.setString(4, object.getKey());
+            } else {
+                statement.setString(1, object.getDepartment());
+                statement.setString(2, object.getPosition());
+                statement.setString(3, object.getTitle());
+                statement.setDate(4, object.getStartDate());
+                statement.setString(5, object.getKey());
+            }
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -115,12 +125,12 @@ public class TeacherDao extends Dao<TeacherEntity, Integer> {
         try {
             while (rs.next()) {
                 TeacherEntity teacherEntity = new TeacherEntity(
-                        rs.getInt(key),
-                        rs.getInt(department),
+                        rs.getString(key),
+                        rs.getString(department),
                         rs.getString(position),
                         rs.getString(title),
-                        rs.getString(surname),
                         rs.getDate(startDate),
+                        rs.getString(surname),
                         rs.getString(phone),
                         rs.getString(sex)
                 );

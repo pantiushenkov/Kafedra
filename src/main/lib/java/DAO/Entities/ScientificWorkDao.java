@@ -12,35 +12,43 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
+public class ScientificWorkDao extends Dao<ScientificWorkEntity, String> {
 
     public ScientificWorkDao(Connection connection) {
         super(connection);
     }
 
-    private String key = "idScientificWork";
-    private String department = "idDepartment";
-    private String name = "Name";
-    private String manager = "Manager";
-    private String customer = "Customer";
-    private String start = "Start";
-    private String end = "End";
-    private String[] params = new String[]{department, name, manager, customer, start, end};
-    private String[] allParams = new String[]{key, department, name, manager, customer, start, end};
+    private String tableName = "science_themes";
+
+    private String key = "id";
+    private String department = "cathedra_id";
+    private String name = tableName + ".name";
+    private String customer = "customer";
+    private String start = "start_date";
+    private String end = "end_date";
+
+    private String[] params = new String[]{department, name, customer, start, end};
+    private String[] allParams = new String[]{key, department, name, customer, start, end};
+    private String innerJoin = "INNER JOIN cathedras c ON science_themes.cathedra_id = c.id";
 
     @Override
     public String getDbName() {
-        return Config.getTable("ScientificWork");
+        return Config.getTable(tableName);
+    }
+
+    @Override
+    public String getSelectQuery() {
+        return super.getSelectQuery() + innerJoin;
     }
 
     @Override
     public String getCreateQuery() {
-        return super.getCreateQuery(allParams);
+        return super.getCreateQuery(allParams, tableName);
     }
 
     @Override
     public String getUpdateQuery() {
-        return super.getUpdateQuery(key, params);
+        return super.getUpdateQuery(key, params, tableName);
     }
 
     @Override
@@ -50,13 +58,13 @@ public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
 
     @Override
     public String getSearchQuery() {
-        return super.getSearchQuery(allParams);
+        return super.getSearchQuery(params, innerJoin);
     }
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, ScientificWorkEntity object) throws PersistException {
         try {
-            statement.setInt(1, object.getKey());
+            statement.setString(1, object.getKey());
             prepareStatement(statement, object, 2);
         } catch (Exception e) {
             throw new PersistException(e);
@@ -65,9 +73,8 @@ public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
 
     private void prepareStatement(PreparedStatement statement, ScientificWorkEntity object, int start) throws PersistException {
         try {
-            statement.setInt(start++, object.getDepartment());
+            statement.setString(start++, object.getDepartment());
             statement.setString(start++, object.getName());
-            statement.setString(start++, object.getManager());
             statement.setString(start++, object.getCustomer());
             statement.setDate(start++, object.getStart());
             statement.setDate(start, object.getEnd());
@@ -81,7 +88,7 @@ public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
     protected void prepareStatementForSearch(PreparedStatement statement, ScientificWorkEntity object) throws PersistException {
         try {
             super.prepareStatementForSearch(statement, new Object[]{
-                            object.getKey(), object.getDepartment(), object.getName(), object.getManager(), object.getCustomer(), object.getStart(), object.getEnd()
+                            object.getDepartment(), object.getName(), object.getCustomer(), object.getStart(), object.getEnd()
                     }
             );
         } catch (Exception e) {
@@ -93,7 +100,7 @@ public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
     protected void prepareStatementForUpdate(PreparedStatement statement, ScientificWorkEntity object) throws PersistException {
         try {
             prepareStatement(statement, object, 1);
-            statement.setInt(allParams.length, object.getKey());
+            statement.setString(allParams.length, object.getKey());
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -106,10 +113,9 @@ public class ScientificWorkDao extends Dao<ScientificWorkEntity, Integer> {
         try {
             while (rs.next()) {
                 ScientificWorkEntity scientificWorkEntity = new ScientificWorkEntity(
-                        rs.getInt(key),
-                        rs.getInt(department),
+                        rs.getString(key),
+                        rs.getString(department),
                         rs.getString(name),
-                        rs.getString(manager),
                         rs.getString(customer),
                         rs.getDate(start),
                         rs.getDate(end)

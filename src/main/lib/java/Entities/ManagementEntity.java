@@ -12,9 +12,9 @@ import java.sql.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ManagementEntity implements Identified<Integer> {
-    private Integer key;
-    private Integer key2;
+public class ManagementEntity implements Identified<String> {
+    private String key;
+    private String key2;
     private Date start;
     private Date end;
 

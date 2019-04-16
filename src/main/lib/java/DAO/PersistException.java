@@ -15,6 +15,7 @@ public class PersistException extends Exception {
 
     public PersistException(Throwable cause) {
         super(cause);
+        cause.printStackTrace();
     }
 
     public PersistException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

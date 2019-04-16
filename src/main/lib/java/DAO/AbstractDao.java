@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 
-public abstract class AbstractDao<T extends Identified<PK>, PK extends Integer> implements GenericDao<T, PK> {
+public abstract class AbstractDao<T extends Identified<PK>, PK extends String> implements GenericDao<T, PK> {
 
     public abstract String getDbName();
 
@@ -14,6 +14,8 @@ public abstract class AbstractDao<T extends Identified<PK>, PK extends Integer> 
     public abstract String getUpdateQuery();
 
     public abstract String getDeleteQuery();
+
+    public abstract String getSelectQuery();
 
     public abstract String getSearchQuery();
 

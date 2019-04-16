@@ -11,28 +11,32 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DepartmentDao extends Dao<DepartmentEntity, Integer> {
+public class DepartmentDao extends Dao<DepartmentEntity, String> {
 
     public DepartmentDao(Connection connection) {
         super(connection);
     }
-    private String key = "idDepartment";
-    private String name = "Name";
-    private String phone = "Phone";
+
+    private String key = "id";
+    private String name = "name";
+    private String phone = "phone_number";
+    private String tableName = "cathedras";
+
+    private String[] attributes = new String[]{key, name, phone,};
 
     @Override
     public String getDbName() {
-        return Config.getTable("Department");
+        return Config.getTable(tableName);
     }
 
     @Override
     public String getCreateQuery() {
-        return super.getCreateQuery(new String[]{key, name, phone});
+        return super.getCreateQuery(attributes, tableName);
     }
 
     @Override
     public String getUpdateQuery() {
-        return super.getUpdateQuery(key, new String[]{name, phone});
+        return super.getUpdateQuery(key, new String[]{name, phone}, tableName);
     }
 
     @Override
@@ -42,13 +46,13 @@ public class DepartmentDao extends Dao<DepartmentEntity, Integer> {
 
     @Override
     public String getSearchQuery() {
-        return super.getSearchQuery(new String[]{key, name, phone});
+        return super.getSearchQuery(new String[]{name, phone});
     }
 
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, DepartmentEntity object) throws PersistException {
         try {
-            statement.setInt(1, object.getKey());
+            statement.setString(1, object.getKey());
             statement.setString(2, object.getName());
             statement.setString(3, object.getPhone());
         } catch (Exception e) {
@@ -61,7 +65,7 @@ public class DepartmentDao extends Dao<DepartmentEntity, Integer> {
         try {
             super.prepareStatementForSearch(
                     statement,
-                    new Object[]{object.getKey(), object.getName(), object.getPhone()}
+                    new Object[]{object.getName(), object.getPhone()}
             );
         } catch (Exception e) {
             throw new PersistException(e);
@@ -73,7 +77,7 @@ public class DepartmentDao extends Dao<DepartmentEntity, Integer> {
         try {
             statement.setString(1, object.getName());
             statement.setString(2, object.getPhone());
-            statement.setInt(3, object.getKey());
+            statement.setString(3, object.getKey());
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -86,7 +90,7 @@ public class DepartmentDao extends Dao<DepartmentEntity, Integer> {
         try {
             while (rs.next()) {
                 DepartmentEntity department = new DepartmentEntity(
-                        rs.getInt(key),
+                        rs.getString(key),
                         rs.getString(name),
                         rs.getString(phone)
                 );

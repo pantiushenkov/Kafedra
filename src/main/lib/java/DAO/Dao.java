@@ -1,6 +1,8 @@
 package lib.java.DAO;
 
 
+import lib.java.Utils.Config;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +10,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends AbstractDao<T, PK> {
+public abstract class Dao<T extends Identified<PK>, PK extends String> extends AbstractDao<T, PK> {
 
     private Connection connection;
 
@@ -16,11 +18,11 @@ public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends 
         this.connection = connection;
     }
 
-    public String getCreateQuery(String[] params) {
+    public String getCreateQuery(String[] params, String table) {
         String paramsQuery = buildParams(params, "", ",");
         String[] q = new String[params.length];
         Arrays.fill(q, "?");
-        return "INSERT INTO" + getDbName() + "(" + paramsQuery + ") VALUES (" + buildParams(q, "", ",") + ");";
+        return "INSERT INTO" + Config.getTable(table) + "(" + paramsQuery + ") VALUES (" + buildParams(q, "", ",") + ");";
     }
 
 
@@ -36,9 +38,9 @@ public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends 
         return "SELECT * FROM" + getDbName();
     }
 
-    public String getUpdateQuery(String key, String[] params) {
+    public String getUpdateQuery(String key, String[] params, String table) {
         String paramsQuery = buildParams(params, "= ?", ",");
-        return "UPDATE" + getDbName() + "SET " + paramsQuery +
+        return "UPDATE" + Config.getTable(table) + "SET " + paramsQuery +
                 "WHERE " + key + "= ?;";
     }
 
@@ -49,8 +51,12 @@ public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends 
     }
 
     public String getSearchQuery(String[] params) {
+        return getSearchQuery(params, "");
+    }
+
+    public String getSearchQuery(String[] params, String join) {
         String paramsQuery = buildParams(params, "like ?", "AND");
-        return "SELECT * FROM" + getDbName() + " WHERE " + paramsQuery;
+        return "SELECT * FROM" + getDbName() + join + " WHERE " + paramsQuery;
     }
 
     protected void prepareStatementForSearch(PreparedStatement statement, Object[] objects) throws PersistException, SQLException {
@@ -78,46 +84,41 @@ public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends 
 
     @Override
     public void delete(T object) throws PersistException {
-        String sql = getDeleteQuery();
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            try {
+        String sqls = getDeleteQuery();
+        for (String sql : sqls.split(";")) {
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 System.out.println(statement);
                 statement.setObject(1, object.getKey());
+                statement.executeUpdate();
             } catch (Exception e) {
                 throw new PersistException(e);
             }
-            int count = statement.executeUpdate();
-            if (count != 1) {
-                throw new PersistException("On delete modify more then 1 record: " + count);
-            }
-        } catch (Exception e) {
-            throw new PersistException(e);
         }
     }
 
     @Override
     public T persist(T object) throws PersistException {
-        String sql = getCreateQuery();
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            prepareStatementForInsert(statement, object);
-            System.out.println(statement);
-            int count = statement.executeUpdate();
-            if (count != 1) {
-                throw new PersistException("On persist modify more then 1 record: " + count);
+        String sqls = getCreateQuery();
+        for (String sql : sqls.split(";")) {
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                prepareStatementForInsert(statement, object);
+                System.out.println(statement);
+                statement.executeUpdate();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                throw new PersistException(e);
             }
-        } catch (Exception e) {
-            throw new PersistException(e);
         }
         return object;
     }
 
     @Override
-    public T getByPK(Integer key) throws PersistException {
+    public T getByPK(String key) throws PersistException {
         List<T> list;
         String sql = getSelectQuery();
         sql += " WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, key);
+            statement.setString(1, key);
             ResultSet rs = statement.executeQuery();
             list = parseResultSet(rs);
         } catch (Exception e) {
@@ -134,16 +135,16 @@ public abstract class Dao<T extends Identified<PK>, PK extends Integer> extends 
 
     @Override
     public void update(T object) throws PersistException {
-        String sql = getUpdateQuery();
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            prepareStatementForUpdate(statement, object);
-            System.out.println(statement);
-            int count = statement.executeUpdate();
-            if (count != 1) {
-                throw new PersistException("On update modify more then 1 record: " + count);
+        String sqls = getUpdateQuery();
+        for (String sql : sqls.split(";")) {
+            System.out.println(sql);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                prepareStatementForUpdate(statement, object);
+                System.out.println(statement);
+                statement.executeUpdate();
+            } catch (Exception e) {
+                throw new PersistException(e);
             }
-        } catch (Exception e) {
-            throw new PersistException(e);
         }
     }
 

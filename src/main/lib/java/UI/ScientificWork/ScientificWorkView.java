@@ -16,10 +16,10 @@ import java.util.List;
 
 public class ScientificWorkView {
 
-    private String[] columns = {"Код", "Код Кафедри", "Назва", "Керівник", "Замовник", "Початок", "Кінець"};
+    private String[] columns = {"Код Кафедри", "Назва", "Керівник", "Замовник", "Початок", "Кінець"};
     private ScientificWorkService scientificWorkService = new ScientificWorkService();
+    List<ScientificWorkEntity> scientificWorkEntities;
 
-    private JTextField search1;
     private JTextField search2;
     private JTextField search3;
     private JTextField search4;
@@ -35,11 +35,7 @@ public class ScientificWorkView {
     public ScientificWorkView() throws PersistException {
         JFrame frame = new JFrame();
         frame.setTitle("Наукова тема");
-        final JTable table = new JTable() {
-            public boolean isCellEditable(int row, int column) {
-                return column != 0 && column != 1;
-            }
-        };
+        final JTable table = new JTable();
 
         Set<Integer> changedRows = new HashSet<>();
         table.addMouseListener(new MouseAdapter() {
@@ -56,7 +52,7 @@ public class ScientificWorkView {
         final DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnIdentifiers(columns);
 
-        List<ScientificWorkEntity> scientificWorkEntities = scientificWorkService.getDao().getAll();
+        scientificWorkEntities = scientificWorkService.getDao().getAll();
         fillTable(scientificWorkEntities, model);
 
         table.setModel(model);
@@ -67,7 +63,6 @@ public class ScientificWorkView {
         table.setRowHeight(19);
 
         JTextField[] searches = new JTextField[]{
-                search1 = new JTextField(),
                 search2 = new JTextField(),
                 search3 = new JTextField(),
                 search4 = new JTextField(),
@@ -101,7 +96,6 @@ public class ScientificWorkView {
 
         frame.add(pane);
 
-        frame.add(search1);
         frame.add(search2);
         frame.add(search3);
         frame.add(search4);
@@ -127,6 +121,7 @@ public class ScientificWorkView {
                 scientificWorkService.getDao().delete(getEntity(row, table));
                 model.removeRow(row);
             } catch (Exception ex) {
+                ex.printStackTrace();
                 Utils.showError(ex);
             }
         });
@@ -175,7 +170,6 @@ public class ScientificWorkView {
     }
 
     private void setSearchFields() {
-        search1.setText("");
         search2.setText("");
         search3.setText("");
         search4.setText("");
@@ -185,32 +179,18 @@ public class ScientificWorkView {
     }
 
     private ScientificWorkEntity getSearchFields() throws ParseException {
-        return ScientificWorkRowParser.createObject(search1, search2, search3, search4, search5, search6, search7);
+        return ScientificWorkRowParser.createObject(search2, search3, search5, search6, search7);
     }
 
     private ScientificWorkEntity getEntity(int row, JTable table) throws ParseException {
-        Integer key, departmentKey;
-        try {
-            key = Integer.parseInt(table.getValueAt(row, 0).toString());
-        } catch (Exception e) {
-            key = null;
-        }
+        Date start = table.getValueAt(row, 3) == null ? null : ScientificWorkRowParser.getDate(table.getValueAt(row, 3).toString());
+        Date end = table.getValueAt(row, 4) == null ? null : ScientificWorkRowParser.getDate(table.getValueAt(row, 4).toString());
 
-        try {
-            departmentKey = Integer.parseInt(table.getValueAt(row, 1).toString());
-        } catch (Exception e) {
-            departmentKey = null;
-        }
-        System.out.println(table.getValueAt(row, 5) == null);
-        Date start = table.getValueAt(row, 5) == null ? null : ScientificWorkRowParser.getDate(table.getValueAt(row, 5).toString());
-        Date end = table.getValueAt(row, 6) == null ? null : ScientificWorkRowParser.getDate(table.getValueAt(row, 6).toString());
-        System.out.println("after");
         return new ScientificWorkEntity(
-                key,
-                departmentKey,
+                scientificWorkEntities.get(row).getKey(),
+                table.getValueAt(row, 0).toString(),
+                table.getValueAt(row, 1).toString(),
                 table.getValueAt(row, 2).toString(),
-                table.getValueAt(row, 3).toString(),
-                table.getValueAt(row, 4).toString(),
                 start,
                 end
         );

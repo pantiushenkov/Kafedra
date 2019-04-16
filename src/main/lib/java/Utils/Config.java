@@ -3,7 +3,7 @@ package lib.java.Utils;
 import lib.java.DAO.DaoFactory;
 
 public class Config {
-    public static String dbName = "kafedra";
+    public static String dbName = "starostiuk_db";
     public static String url = "jdbc:mysql://localhost:3306/" + dbName;
     public static String user = "root";
     public static String pass= "bob";

@@ -19,18 +19,14 @@ public class AddScientificWorkView extends JFrame {
     private JButton apply;
     private JButton cancel;
 
-    private JLabel label1;
     private JLabel label2;
     private JLabel label3;
-    private JLabel label4;
     private JLabel label5;
     private JLabel label6;
     private JLabel label7;
 
-    private JTextField field1;
     private JTextField field2;
     private JTextField field3;
-    private JTextField field4;
     private JTextField field5;
     private JTextField field6;
     private JTextField field7;
@@ -54,17 +50,11 @@ public class AddScientificWorkView extends JFrame {
         int start = 50;
         int step = 50;
 
-        label1 = CLabel.create("Код: ", new int[]{80, start, 121, 32});
-        field1 = CTextField.create(new int[]{240, start, 150, 35});
-
         label2 = CLabel.create("Код кафедри: ", new int[]{80, start += step, 122, 25});
         field2 = CTextField.create(new int[]{240, start, 150, 35});
 
         label3 = CLabel.create("Назва: ", new int[]{80, start += step, 122, 25});
         field3 = CTextField.create(new int[]{240, start, 150, 35});
-
-        label4 = CLabel.create("Керівник: ", new int[]{80, start += step, 122, 25});
-        field4 = CTextField.create(new int[]{240, start, 150, 35});
 
         label5 = CLabel.create("Замовник: ", new int[]{80, start += step, 122, 25});
         field5 = CTextField.create(new int[]{240, start, 150, 35});
@@ -81,7 +71,7 @@ public class AddScientificWorkView extends JFrame {
         apply = CButton.create("ОК", new int[]{277, 400, 150, 35});
         apply.addActionListener(e -> {
             try {
-                ScientificWorkEntity scientificWorkEntity = ScientificWorkRowParser.createObject(field1, field2, field3, field4, field5, field6, field7);
+                ScientificWorkEntity scientificWorkEntity = ScientificWorkRowParser.createObject(field2, field3, field5, field6, field7);
                 scientificWorkService.getDao().persist(scientificWorkEntity);
                 model.addRow(scientificWorkEntity.getRow());
                 dispose();
@@ -93,18 +83,14 @@ public class AddScientificWorkView extends JFrame {
         contentPane.add(apply);
         contentPane.add(cancel);
 
-        contentPane.add(field1);
         contentPane.add(field2);
         contentPane.add(field3);
-        contentPane.add(field4);
         contentPane.add(field5);
         contentPane.add(field6);
         contentPane.add(field7);
 
-        contentPane.add(label1);
         contentPane.add(label2);
         contentPane.add(label3);
-        contentPane.add(label4);
         contentPane.add(label5);
         contentPane.add(label6);
         contentPane.add(label7);

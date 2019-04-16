@@ -179,25 +179,12 @@ public class ManagementView {
     }
 
     private ManagementEntity getEntity(int row, JTable table) throws ParseException {
-        Integer key, key2;
-        try {
-            key = Integer.parseInt(table.getValueAt(row, 0).toString());
-        } catch (Exception e) {
-            key = null;
-        }
-
-        try {
-            key2 = Integer.parseInt(table.getValueAt(row, 1).toString());
-        } catch (Exception e) {
-            key2 = null;
-        }
-
         Date start = table.getValueAt(row, 2) == null ? null : ManagementRowParser.getDate(table.getValueAt(row, 2).toString());
         Date end = table.getValueAt(row, 3) == null ? null : ManagementRowParser.getDate(table.getValueAt(row, 3).toString());
 
         return new ManagementEntity(
-                key,
-                key2,
+                table.getValueAt(row, 0).toString(),
+                table.getValueAt(row, 1).toString(),
                 start,
                 end
         );

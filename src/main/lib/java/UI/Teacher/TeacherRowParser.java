@@ -9,29 +9,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class TeacherRowParser {
-    public static TeacherEntity createObject(JTextField field1, JTextField field2, JTextField field3, JTextField field4, JTextField field5, JTextField field6, JTextField field7, JTextField field8) throws ParseException {
-        Integer key, department;
-        try {
-            key = Integer.parseInt(field1.getText());
-        } catch (Exception e) {
-            key = null;
-        }
-
-        try {
-            department = Integer.parseInt(field2.getText());
-        } catch (Exception e) {
-            department = null;
-        }
-
+    public static TeacherEntity createObject(JTextField field1, JTextField field2, JTextField field3, JTextField field4, JTextField field5, JTextField field6, JTextField field7) throws ParseException {
         return new TeacherEntity(
-                key,
-                department,
+                field1.getText(),
+                field2.getText(),
                 field3.getText(),
-                field4.getText(),
+                getDate(field4.getText()),
                 field5.getText(),
-                getDate(field6.getText()),
-                field7.getText(),
-                field8.getText()
+                field6.getText(),
+                field7.getText()
         );
     }
 

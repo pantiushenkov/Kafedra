@@ -13,10 +13,10 @@ import java.util.*;
 import java.util.List;
 
 public class DepartmentView {
-    private String[] columns = {"Код", "Назва", "Телефон"};
+    private String[] columns = {"Назва", "Телефон"};
     private DepartmentService departmentService = new DepartmentService();
+    List<DepartmentEntity> departments;
 
-    private JTextField search1;
     private JTextField search2;
     private JTextField search3;
 
@@ -28,11 +28,7 @@ public class DepartmentView {
     public DepartmentView() throws PersistException {
         JFrame frame = new JFrame();
         frame.setTitle("Кафедра");
-        final JTable table = new JTable() {
-            public boolean isCellEditable(int row, int column) {
-                return column != 0;
-            }
-        };
+        final JTable table = new JTable();
 
         Set<Integer> changedRows = new HashSet<>();
         table.addMouseListener(new MouseAdapter() {
@@ -49,7 +45,7 @@ public class DepartmentView {
         final DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnIdentifiers(columns);
 
-        List<DepartmentEntity> departments = departmentService.getDao().getAll();
+        departments = departmentService.getDao().getAll();
         fillTable(departments, model);
 
         table.setModel(model);
@@ -59,21 +55,22 @@ public class DepartmentView {
         table.setFont(font);
         table.setRowHeight(19);
 
-        search1 = new JTextField();
-        search2 = new JTextField();
-        search3 = new JTextField();
-
-        setSearchFields();
-
         JButton btnAdd = new JButton("Додати");
         JButton btnDelete = new JButton("Видалити");
         JButton btnUpdate = new JButton("Змінити");
         JButton btnSearch = new JButton("Пошук");
         JButton btnClearSearch = new JButton("Скинути");
 
-        search1.setBounds(0, searchStartY, tableWidth / columns.length, searchHeight / 2);
-        search2.setBounds(tableWidth / columns.length, searchStartY, tableWidth / columns.length, searchHeight / 2);
-        search3.setBounds(2 * tableWidth / columns.length, searchStartY, tableWidth / columns.length, searchHeight / 2);
+        JTextField[] searches = new JTextField[]{
+                search2 = new JTextField(),
+                search3 = new JTextField(),
+        };
+
+        for (int i = 0; i < searches.length; i++) {
+            searches[i].setBounds((i * tableWidth) / columns.length, searchStartY, tableWidth / columns.length, searchHeight / 2);
+        }
+
+        setSearchFields();
 
         btnAdd.setBounds(25, searchStartY + tableHeight + 50, 100, 25);
         btnUpdate.setBounds(150, searchStartY + tableHeight + 50, 100, 25);
@@ -88,7 +85,6 @@ public class DepartmentView {
 
         frame.add(pane);
 
-        frame.add(search1);
         frame.add(search2);
         frame.add(search3);
         frame.add(btnAdd);
@@ -140,6 +136,7 @@ public class DepartmentView {
                 try {
                     departmentService.getDao().update(getEntity(row, table));
                 } catch (Exception ek) {
+                    ek.printStackTrace();
                     table.setEditingRow(row);
                     Utils.showError(ek);
                 }
@@ -155,24 +152,17 @@ public class DepartmentView {
     }
 
     private void setSearchFields() {
-        search1.setText("");
         search2.setText("");
         search3.setText("");
     }
 
     private DepartmentEntity getSearchFields() {
-        return DepartmentRowParser.createObject(search1, search2, search3);
+        return DepartmentRowParser.createObject(search2, search3);
     }
 
     private DepartmentEntity getEntity(int row, JTable table) {
-        Integer key;
-        try {
-            key = Integer.parseInt(table.getValueAt(row, 0).toString());
-        } catch (Exception e) {
-            key = null;
-        }
-        String name = table.getValueAt(row, 1).toString();
-        String phone = table.getValueAt(row, 2).toString();
-        return new DepartmentEntity(key, name, phone);
+        String name = table.getValueAt(row, 0).toString();
+        String phone = table.getValueAt(row, 1).toString();
+        return new DepartmentEntity(departments.get(row).getKey(), name, phone);
     }
 }

@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ManagementDao extends Dao<ManagementEntity, Integer> {
+public class ManagementDao extends Dao<ManagementEntity, String> {
 
     public ManagementDao(Connection connection) {
         super(connection);
@@ -24,15 +24,16 @@ public class ManagementDao extends Dao<ManagementEntity, Integer> {
 
     private String[] params = new String[]{start, end};
     private String[] allParams = new String[]{key, key2, start, end};
+    private String tableName = "Management";
 
     @Override
     public String getDbName() {
-        return Config.getTable("Management");
+        return Config.getTable(tableName);
     }
 
     @Override
     public String getCreateQuery() {
-        return super.getCreateQuery(allParams);
+        return super.getCreateQuery(allParams, tableName);
     }
 
     @Override
@@ -53,8 +54,8 @@ public class ManagementDao extends Dao<ManagementEntity, Integer> {
     @Override
     protected void prepareStatementForInsert(PreparedStatement statement, ManagementEntity object) throws PersistException {
         try {
-            statement.setInt(1, object.getKey());
-            statement.setInt(2, object.getKey2());
+            statement.setString(1, object.getKey());
+            statement.setString(2, object.getKey2());
             prepareStatement(statement, object, 3);
         } catch (Exception e) {
             throw new PersistException(e);
@@ -90,8 +91,8 @@ public class ManagementDao extends Dao<ManagementEntity, Integer> {
     protected void prepareStatementForUpdate(PreparedStatement statement, ManagementEntity object) throws PersistException {
         try {
             prepareStatement(statement, object, 1);
-            statement.setInt(3, object.getKey());
-            statement.setInt(4, object.getKey2());
+            statement.setString(3, object.getKey());
+            statement.setString(4, object.getKey2());
         } catch (Exception e) {
             throw new PersistException(e);
         }
@@ -104,8 +105,8 @@ public class ManagementDao extends Dao<ManagementEntity, Integer> {
         try {
             while (rs.next()) {
                 ManagementEntity managementEntity = new ManagementEntity(
-                        rs.getInt(key),
-                        rs.getInt(key2),
+                        rs.getString(key),
+                        rs.getString(key2),
                         rs.getDate(start),
                         rs.getDate(end)
                 );

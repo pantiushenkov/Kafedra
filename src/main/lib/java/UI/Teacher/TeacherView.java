@@ -18,9 +18,9 @@ import java.util.Set;
 
 public class TeacherView {
 
-    private String[] columns = {"Код", "Кафедра", "Посада", "Звання", "Прізвище", "Початок роботи", "Телефон", "Стать"};
+    private String[] columns = {"Кафедра", "Посада", "Звання", "Початок роботи", "Прізвище", "Телефон", "Стать"};
     private TeacherService teacherService = new TeacherService();
-
+    List<TeacherEntity> teacherEntities;
     private JTextField search1;
     private JTextField search2;
     private JTextField search3;
@@ -28,7 +28,6 @@ public class TeacherView {
     private JTextField search5;
     private JTextField search6;
     private JTextField search7;
-    private JTextField search8;
 
     private int tableHeight = 700;
     private int tableWidth = tableHeight + 300;
@@ -59,7 +58,7 @@ public class TeacherView {
         final DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setColumnIdentifiers(columns);
 
-        List<TeacherEntity> teacherEntities = teacherService.getDao().getAll();
+        teacherEntities = teacherService.getDao().getAll();
         fillTable(teacherEntities, model);
 
         table.setModel(model);
@@ -77,7 +76,6 @@ public class TeacherView {
                 search5 = new JTextField(),
                 search6 = new JTextField(),
                 search7 = new JTextField(),
-                search8 = new JTextField()
         };
 
         for (int i = 0; i < searches.length; i++) {
@@ -112,7 +110,6 @@ public class TeacherView {
         frame.add(search5);
         frame.add(search6);
         frame.add(search7);
-        frame.add(search8);
 
         frame.add(btnAdd);
         frame.add(btnDelete);
@@ -187,38 +184,24 @@ public class TeacherView {
         search5.setText("");
         search6.setText("");
         search7.setText("");
-        search8.setText("");
     }
 
     private TeacherEntity getSearchFields() throws ParseException {
-        return TeacherRowParser.createObject(search1, search2, search3, search4, search5, search6, search7, search7);
+        return TeacherRowParser.createObject(search1, search2, search3, search4, search5, search6, search7);
     }
 
     private TeacherEntity getEntity(int row, JTable table) throws ParseException {
-        Integer key, departmentKey;
-        try {
-            key = Integer.parseInt(table.getValueAt(row, 0).toString());
-        } catch (Exception e) {
-            key = null;
-        }
-
-        try {
-            departmentKey = Integer.parseInt(table.getValueAt(row, 1).toString());
-        } catch (Exception e) {
-            departmentKey = null;
-        }
-
-        Date startDate = table.getValueAt(row, 5) == null ? null : TeacherRowParser.getDate(table.getValueAt(row, 5).toString());
+        Date startDate = table.getValueAt(row, 3) == null ? null : TeacherRowParser.getDate(table.getValueAt(row, 3).toString());
 
         return new TeacherEntity(
-                key,
-                departmentKey,
+                teacherEntities.get(row).getKey(),
+                table.getValueAt(row, 0).toString(),
+                table.getValueAt(row, 1).toString(),
                 table.getValueAt(row, 2).toString(),
-                table.getValueAt(row, 3).toString(),
-                table.getValueAt(row, 4).toString(),
                 startDate,
-                table.getValueAt(row, 6).toString(),
-                table.getValueAt(row, 7).toString()
+                table.getValueAt(row, 4).toString(),
+                table.getValueAt(row, 5).toString(),
+                table.getValueAt(row, 6).toString()
         );
     }
 }

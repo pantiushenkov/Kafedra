@@ -13,8 +13,7 @@ public class Service<T> {
     Connection connection;
     private GenericDao dao;
 
-    public Service() {
-    }
+    public Service() { }
 
     public Service(Class<T> cclass) {
         factory = new DaoFactory();
