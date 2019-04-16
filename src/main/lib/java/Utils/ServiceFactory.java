@@ -1,14 +1,16 @@
 package lib.java.Utils;
 
 
+import lib.java.Services.ChuhalovaService;
+import lib.java.Services.MasterService;
 import lib.java.dao2.impl.*;
 import lib.java.dao2.interfaces.*;
 import lib.java.model.Master;
 
 public class ServiceFactory {
 
-//    private static MasterService masterService;
-//    private static ChuhalovaService chuhalovaService;
+    private static MasterService masterService;
+    private static ChuhalovaService chuhalovaService;
     private static BaseDao<Master> masterDao = new MasterDao();
     private static CathedraDao cathedraDao = new CathedraDaoImpl();
     private static ScienceThemeDao scienceThemeDao = new ScienceThemeDaoImpl();
@@ -20,27 +22,27 @@ public class ServiceFactory {
     private ServiceFactory() {
     }
 
-//    public static MasterService getMasterService() {
-//        if (masterService == null) {
-//            masterService = new MasterService(masterDao,
-//                    cathedraDao,
-//                    scienceThemeDao,
-//                    teacherDao,
-//                    worksAndJobsDao,
-//                    scientistBaseDao);
-//        }
-//        return masterService;
-//    }
-//
-//    public static ChuhalovaService getChuhalovaService() {
-//        if (chuhalovaService == null) {
-//            chuhalovaService = new ChuhalovaService(scienceThemeDao,
-//                    cathedraDao,
-//                    postgraduateDao,
-//                    masterDao,
-//                    teacherDao);
-//        }
-//        return chuhalovaService;
-//    }
+    public static MasterService getMasterService() {
+        if (masterService == null) {
+            masterService = new MasterService(masterDao,
+                    cathedraDao,
+                    scienceThemeDao,
+                    teacherDao,
+                    worksAndJobsDao,
+                    scientistBaseDao);
+        }
+        return masterService;
+    }
+
+    public static ChuhalovaService getChuhalovaService() {
+        if (chuhalovaService == null) {
+            chuhalovaService = new ChuhalovaService(scienceThemeDao,
+                    cathedraDao,
+                    postgraduateDao,
+                    masterDao,
+                    teacherDao);
+        }
+        return chuhalovaService;
+    }
 
 }
