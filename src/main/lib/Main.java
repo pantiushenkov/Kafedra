@@ -10,15 +10,13 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        new MainForm(ServiceFactory.getMasterService());
-        new ScienceTopic_Form(ServiceFactory.getMasterService(), ServiceFactory.getChuhalovaService()).setVisible(true);
-//        SwingUtilities.invokeLater(() -> {
-//            try {
-//                new NavigationMenu();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
+        SwingUtilities.invokeLater(() -> {
+            try {
+                new NavigationMenu();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }

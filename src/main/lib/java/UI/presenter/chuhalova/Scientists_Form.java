@@ -1,4 +1,4 @@
-//package com.univer.presenter.chuhalova;
+package lib.java.UI.presenter.chuhalova;
 //
 //import com.mysql.jdbc.Connection;
 //import com.univer.model.Cathedra;
@@ -25,7 +25,7 @@
 //import javax.swing.JOptionPane;
 //
 //import javax.swing.table.DefaultTableModel;
-//public class Scientists_Form extends javax.swing.JFrame {
+public class Scientists_Form extends javax.swing.JFrame {}
 //
 //    private ChuhalovaService chuhalovaService;
 //    private MasterService masterService;
